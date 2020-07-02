@@ -44,53 +44,18 @@ func TestAutoindexPatternMatchers(t *testing.T) {
 		tcaseName             string
 	}{
 		{
-			generalPattern:        "?-*",
-			indices:               []kibana.Index{{Name: "foo-bar-2020.02.14"}, {Name: "foo-qux-2020.02.14"}, {Name: "test-2020.02.14"}},
-			indexpatterns:         []kibana.IndexPattern{{Title: "test-*", TimeFieldName: "@timestamp"}},
-			expectedIndexPatterns: []string{"foo-*"},
-			tcaseName:             `"test-*" already exists`,
-		},
-		{
-			generalPattern:        "?-*",
-			indices:               []kibana.Index{{Name: "foo-bar-2020.02.14"}, {Name: "foo-qux-2020.02.14"}, {Name: "test-2020.02.14"}},
+			generalPattern:        "logs-mcoins-analytics-?-*",
+			indices:               []kibana.Index{{Name: "logs-mcoins-analytics-writer-2020.02.14"}, {Name: "logs-mcoins-analytics-prediction-persister-2020.02.14"}, {Name: "logs-mcoins-analytics-denormalizer-subscriber-2020.02.14"}},
 			indexpatterns:         []kibana.IndexPattern{},
-			expectedIndexPatterns: []string{"foo-*", "test-*"},
-			tcaseName:             `"test-*" does not exist`,
+			expectedIndexPatterns: []string{"logs-mcoins-analytics-writer-*", "logs-mcoins-analytics-prediction-persister-*", "logs-mcoins-analytics-denormalizer-subscriber-*"},
+			tcaseName:             `analytics`,
 		},
 		{
-			generalPattern:        "?-*",
-			indices:               []kibana.Index{},
-			indexpatterns:         []kibana.IndexPattern{{Title: "*", TimeFieldName: "@timestamp"}},
-			expectedIndexPatterns: []string{},
-			tcaseName:             `negative test`,
-		},
-		{
-			generalPattern:        "?-*",
-			indices:               []kibana.Index{{Name: "-cool-index-"}, {Name: ".kibana"}, {Name: "test----aabcc2020.02.14"}},
+			generalPattern:        "logs-mcoins-marketing-?-*",
+			indices:               []kibana.Index{{Name: "logs-mcoins-marketing-terminal-views-subscriber-2020.06.30"}},
 			indexpatterns:         []kibana.IndexPattern{},
-			expectedIndexPatterns: []string{"test-*", "-*", "*-*"},
-			tcaseName:             `random gibberish that should not match most of the time besides two`,
-		},
-		{
-			generalPattern:        "?-?-*",
-			indices:               []kibana.Index{{Name: "foo-bar-2020.02.14"}, {Name: "foo-baz-2020.02.14"}},
-			indexpatterns:         []kibana.IndexPattern{},
-			expectedIndexPatterns: []string{"foo-bar-*", "foo-baz-*"},
-			tcaseName:             `multiple matcher test`,
-		},
-		{
-			generalPattern:        "?-?-*",
-			indices:               []kibana.Index{{Name: "foo-bar-2020.02.14"}, {Name: "foo-baz-2020.02.14"}},
-			indexpatterns:         []kibana.IndexPattern{{Title: "foo-bar-*", TimeFieldName: "@timestamp"}},
-			expectedIndexPatterns: []string{"foo-baz-*"},
-			tcaseName:             `multiple matcher test but w/ existing index patterns`,
-		},
-		{
-			generalPattern:        "?-?-*",
-			indices:               []kibana.Index{{Name: "foo-bar-a-2020.02.14"}, {Name: "foo-baz-b-2020.02.14"}},
-			indexpatterns:         []kibana.IndexPattern{},
-			expectedIndexPatterns: []string{"foo-baz-*", "foo-bar-*"},
-			tcaseName:             `multiple matcher and matching eagerly vs. lazily test`,
+			expectedIndexPatterns: []string{"logs-mcoins-marketing-terminal-views-subscriber-*"},
+			tcaseName:             `marketing`,
 		},
 	} {
 		autoIdxPttrn := NewAutoIndexPattern(config.AutoIndexPattern{
