@@ -108,23 +108,23 @@ func (a *APIVer7) IndexPatterns(ctx context.Context, filter string, fields []str
 	var IndexPatterns = make([]IndexPattern, 0)
 
 	requestBody := fmt.Sprintf(`{
-	  "_source": ["index-pattern.title","index-pattern.timeFieldName"],
-      "size": 10000,
-	  "query": {
-			"bool": {
-		  "must": [
-			{
-			  "query_string" : {
-				"query" : "%s",
-				"auto_generate_synonyms_phrase_query": true,
-				"analyze_wildcard": true,
-				"default_operator": "AND"
-				, "fields": ["index-pattern.title"]
-				, "fuzziness": 0.0
-				, "phrase_slop": 0
-			}
-			},
-			{
+  "_source": ["index-pattern.title","index-pattern.timeFieldName"],
+  "size": 10000,
+  "query": {
+		"bool": {
+  	  "must": [
+  			{
+  			  "query_string" : {
+    				"query" : "*",
+    				"auto_generate_synonyms_phrase_query": true,
+    				"analyze_wildcard": true,
+    				"default_operator": "AND",
+    				"fields": ["index-pattern.title"],
+    				"fuzziness": 0.0,
+    				"phrase_slop": 0
+  			  }
+  			},
+  			{
 			  "match_phrase": {
 				"type": {
 				  "query": "index-pattern"
@@ -137,7 +137,7 @@ func (a *APIVer7) IndexPatterns(ctx context.Context, filter string, fields []str
 		  "must_not": []
 		}
 	  }
-	}`, filter)
+	}`)
 
 	resp, err := a.client.Post(ctx, "/api/console/proxy?path=.kibana/_search&method=POST", strings.NewReader(requestBody))
 	if err != nil {

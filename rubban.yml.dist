@@ -1,22 +1,16 @@
 kibana:
-    host: http://localhost:5601
-    user: elastic
-    password: changeme
+    host: kibana-kibana.sandbox-elasticsearch:5601
 
 autoIndexPattern:
     enabled: false
-    schedule: "*/5 * * * *"
+    schedule: "*/1 * * * *"
     concurrency: 10
     generalPatterns:
-        -   pattern: logstash-apache-access-?-*
-            timeFieldName: "@timestamp"
+        -   pattern: logs-mcoins-marketing-*
+            timeFieldName: "timestamp"
 
 refreshIndexPattern:
     enabled: false
-    schedule: "* * * * *"
-    concurrency: 10
-    patterns:
-        - logstash-apache-access-*-*
 
 logging:
     level: info
