@@ -6,7 +6,7 @@ VERSION := $(shell git describe --exact-match --tags 2> /dev/null || git describ
 GIT_DIRTY=$(shell test -n "`git status --porcelain`" && echo "+dirty" || true)
 GIT_COMMIT=$(shell git rev-parse --short HEAD)${GIT_DIRTY}
 BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-IMAGE_NAME := sherifabdlnaby/rubban
+IMAGE_NAME := 164105964448.dkr.ecr.eu-central-1.amazonaws.com/mcoins/monitoring/rubban
 FLAGS := -X github.com/sherifabdlnaby/rubban/version.GitCommit=${GIT_COMMIT} -X github.com/sherifabdlnaby/rubban/version.Version=${VERSION} -X github.com/sherifabdlnaby/rubban/version.BuildDate=${BUILD_DATE}
 
 default: run

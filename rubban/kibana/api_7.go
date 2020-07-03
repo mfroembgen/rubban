@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"regexp"
 	"strings"
 
@@ -54,11 +55,21 @@ func (a *APIVer7) Info(ctx context.Context) (Info, error) {
 //Indices Get Indices match supported filter (support wildcards)
 func (a *APIVer7) Indices(ctx context.Context, filter string) ([]Index, error) {
 	indices := make([]Index, 0)
-	resp, err := a.client.Post(ctx, fmt.Sprintf("/api/console/proxy?path=_cat/indices/%s?format=json&h=index&method=GET", filter), nil)
+	resp, err := a.client.Post(ctx, "/api/console/proxy?path=_cat/indices/*?format=json&method=GET", nil)
 	if err != nil {
 		return indices, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode >= 300 {
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		a.log.Warnf("invalid request to kibana: %s", string(body))
+	}
+
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		err := json.NewDecoder(resp.Body).Decode(&indices)
 		if err != nil {
