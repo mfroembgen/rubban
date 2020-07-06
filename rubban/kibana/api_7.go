@@ -145,6 +145,17 @@ func (a *APIVer7) IndexPatterns(ctx context.Context, filter string, fields []str
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode >= 300 {
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		a.log.Warnf("invalid pattern: %s", string(body))
+
+		return nil, err
+	}
+
 	response := FindIndexPatternResponse{}
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		err := json.NewDecoder(resp.Body).Decode(&response)
@@ -153,7 +164,22 @@ func (a *APIVer7) IndexPatterns(ctx context.Context, filter string, fields []str
 		}
 	}
 
-	regex := regexp.MustCompile(utils.PatternToRegex(filter))
+	pattern := utils.PatternToRegex(filter)
+	regex := regexp.MustCompile(pattern)
+
+	marshalled, err := json.Marshal(pattern)
+	if err != nil {
+		a.log.Warnw("unable to marshal filter", "error", err.Error())
+	} else {
+		a.log.Infof("retrieved filter: %s", string(marshalled))
+	}
+
+	marshalled, err = json.Marshal(response)
+	if err != nil {
+		a.log.Warnw("unable to marshal response", "error", err.Error())
+	} else {
+		a.log.Infof("retrieved response: %s", string(marshalled))
+	}
 
 	for _, hit := range response.Hits.Hits {
 		if regex.MatchString(hit.Source.IndexPattern.Title) {

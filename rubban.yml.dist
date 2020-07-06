@@ -2,7 +2,7 @@ kibana:
     host: kibana-kibana.sandbox-elasticsearch:5601
 
 autoIndexPattern:
-    enabled: false
+    enabled: true
     schedule: "*/1 * * * *"
     concurrency: 10
     generalPatterns:
