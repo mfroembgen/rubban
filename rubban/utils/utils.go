@@ -11,7 +11,17 @@ func PatternToRegex(s string) string {
 	s = regexp.QuoteMeta(s)
 
 	// Unescape only \* and \? to actual Regex symbols
-	s = strings.NewReplacer("\\*", "(.*)$", "\\?", "(.*)").Replace(s)
+	s = strings.NewReplacer("\\*", "(.*$)", "\\?", "(.*)").Replace(s)
+
+	return s
+}
+
+func NewPatternToRegex(s string) string {
+	// Escape Index Pattern name (to escape dots(.) and other regex special symbols
+	s = regexp.QuoteMeta(s)
+
+	// Unescape only \* and \? to actual Regex symbols
+	s = strings.NewReplacer("\\*", "(.*)").Replace(s)
 
 	return s
 }

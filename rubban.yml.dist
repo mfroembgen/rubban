@@ -6,7 +6,9 @@ autoIndexPattern:
     schedule: "*/1 * * * *"
     concurrency: 10
     generalPatterns:
-        -   pattern: logs-mcoins-marketing-*
+        -   pattern: logs-mcoins-marketing-?-*
+            timeFieldName: "timestamp"
+        -   pattern: logs-mcoins-analytics-?-*
             timeFieldName: "timestamp"
 
 refreshIndexPattern:

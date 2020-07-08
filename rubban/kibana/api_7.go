@@ -55,7 +55,9 @@ func (a *APIVer7) Info(ctx context.Context) (Info, error) {
 //Indices Get Indices match supported filter (support wildcards)
 func (a *APIVer7) Indices(ctx context.Context, filter string) ([]Index, error) {
 	indices := make([]Index, 0)
-	resp, err := a.client.Post(ctx, "/api/console/proxy?path=_cat/indices/*?format=json&method=GET", nil)
+	url := fmt.Sprintf("/api/console/proxy?path=_cat/indices/%s?format=json&method=GET", filter)
+	resp, err := a.client.Post(ctx, url, nil)
+
 	if err != nil {
 		return indices, err
 	}
@@ -106,7 +108,6 @@ func (a *APIVer7) IndexPatterns(ctx context.Context, filter string, fields []str
 	// so it's okay to do these extra steps and won't add much overhead.
 
 	var IndexPatterns = make([]IndexPattern, 0)
-
 	requestBody := fmt.Sprintf(`{
   "_source": ["index-pattern.title","index-pattern.timeFieldName"],
   "size": 10000,
@@ -164,7 +165,7 @@ func (a *APIVer7) IndexPatterns(ctx context.Context, filter string, fields []str
 		}
 	}
 
-	pattern := utils.PatternToRegex(filter)
+	pattern := utils.NewPatternToRegex(filter)
 	regex := regexp.MustCompile(pattern)
 
 	marshalled, err := json.Marshal(pattern)
