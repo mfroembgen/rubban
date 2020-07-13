@@ -18,11 +18,12 @@ func (a *AutoIndexPattern) Run(ctx context.Context) {
 	pool := gpool.NewPool(a.concurrency)
 	wg := sync.WaitGroup{}
 	for _, generalPattern := range a.GeneralPatterns {
+		multipleGeneralPatterns := generalPattern
 		mx := sync.Mutex{}
 		wg.Add(1)
 		err := pool.Enqueue(ctx, func() {
 			defer wg.Done()
-			indexPatterns := a.getIndexPattern(ctx, generalPattern)
+			indexPatterns := a.getIndexPattern(ctx, multipleGeneralPatterns)
 
 			// Add Result to global Result
 			mx.Lock()
